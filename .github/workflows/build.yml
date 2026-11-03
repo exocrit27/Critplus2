@@ -1,0 +1,35 @@
+
+name: Build Critplus
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Extract Critplus
+        run: unzip Critplus-0.1.0.zip -d .
+
+      - name: Build mod
+        run: |
+          chmod +x Critplus/gradlew
+          cd Critplus
+          ./gradlew build --no-daemon
+
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: Critplus-JAR
+          path: Critplus/build/libs/*.jar
